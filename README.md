@@ -28,17 +28,9 @@ git clone https://github.com/yourusername/brilliant-frames.git
 cd brilliant-frames
 ```
 
-3. Create and activate a virtual environment using `uv`:
+3. Install dependencies from the lock file:
 ```bash
-uv venv
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate  # On Windows
-```
-
-4. Install dependencies:
-```bash
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ## Usage
@@ -53,6 +45,8 @@ uv run camera.py
 - `camera.py` - Example script demonstrating camera functionality
 - `lua/` - Lua scripts for the Frame device
 - `frame_msg.py` - Message handling for Frame communication
+- `pyproject.toml` - Project dependencies and metadata
+- `uv.lock` - Locked dependencies for reproducible installations
 
 ## Contributing
 
