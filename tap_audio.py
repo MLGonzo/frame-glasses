@@ -3,11 +3,14 @@ import os
 from datetime import datetime
 
 from frame_msg import FrameMsg, RxAudio, RxTap, TxCode
+from utils.mock_ai import mock_process_audio
+from utils.text import format_text_for_frame
 
 async def main():
     """
     Listen for taps on the Frame and record audio when a tap is detected.
     First tap starts recording, second tap stops recording.
+    Process the audio through mock AI functions and display results.
     """
     frame = FrameMsg()
     speaker = None
@@ -82,6 +85,16 @@ async def main():
                             wav_file.write(wav_bytes)
                         
                         print(f"Audio saved to: {wav_file_path}")
+
+                        # Process audio through mock AI functions
+                        print("Processing audio through AI...")
+                        text_blocks = mock_process_audio(wav_file_path)
+                        
+                        # Format and display text blocks on Frame
+                        formatted_text = format_text_for_frame(text_blocks, max_lines=6)
+                        for block in formatted_text:
+                            await frame.print_short_text(block)
+                            await asyncio.sleep(0.5)  # Small delay between blocks
                     else:
                         print("No audio data received")
                 except asyncio.TimeoutError:
