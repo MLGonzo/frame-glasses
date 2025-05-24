@@ -1,0 +1,10 @@
+[project]
+name = "brilliant-frames"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "frame-msg>=5.1.1",
+    "pillow>=11.2.1",
+]
