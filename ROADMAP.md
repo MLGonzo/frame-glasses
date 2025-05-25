@@ -5,9 +5,9 @@ This document outlines the current investigations and planned features for the B
 ## Current Investigations 🧪
 
 - [x] Basic camera functionality and image capture
-- [ ] Investigating tap functionality
-- [ ] Investigating audio record functionality
-- [ ] Investigating putting arbitrary text easily on screen
+- [x] Investigating tap functionality
+- [x] Investigating audio record functionality
+- [x] Investigating putting arbitrary text easily on screen
 
 ## Short-term Goals 🎯
 
