@@ -2,20 +2,34 @@ local data = require('data.min')
 local code = require('code.min')
 local audio = require('audio.min')
 local tap = require('tap.min')
+local plain_text = require('plain_text.min')
 
 -- Phone to Frame flags
 TAP_SUBS_MSG = 0x10
 AUDIO_SUBS_MSG = 0x30
+TEXT_FLAG = 0x0a
 
 -- register the message parsers
 data.parsers[TAP_SUBS_MSG] = code.parse_code
 data.parsers[AUDIO_SUBS_MSG] = code.parse_code
+data.parsers[TEXT_FLAG] = plain_text.parse_plain_text
+
+function print_text(text)
+    local i = 0
+    for line in text:gmatch('([^\n]*)\n?') do
+        if line ~= '' then
+            frame.display.text(line, 1, i * 60 + 1)
+            i = i + 1
+        end
+    end
+    frame.display.show()
+end
 
 function app_loop()
-    frame.display.text('Tap to Record', 1, 1)
+    frame.display.text('Frame App Started', 1, 1)
     frame.display.show()
 
-    -- tell the host program that the frameside app is ready
+    -- tell the host program that the frameside app is ready (waiting on await_print)
     print('Frame app is running')
 
     local streaming = false
@@ -62,6 +76,16 @@ function app_loop()
                         end
                         frame.display.show()
                         data.app_data[AUDIO_SUBS_MSG] = nil
+                    end
+
+                    -- Handle plain text messages
+                    if data.app_data[TEXT_FLAG] ~= nil and data.app_data[TEXT_FLAG].string ~= nil then
+                        local text = data.app_data[TEXT_FLAG]
+                        print_text(text.string)
+
+                        -- clear the object and run the garbage collector right away
+                        data.app_data[TEXT_FLAG] = nil
+                        collectgarbage('collect')
                     end
                 end
 
