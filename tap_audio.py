@@ -7,6 +7,7 @@ from utils.mock_ai import mock_process_audio
 from utils.text import format_text_for_frame
 from utils.message import safe_send_message
 from utils.frame_utils import cleanup
+from utils.audio_utils import transcribe_audio
 
 TEXT_CHANNEL = 0x0a
 TAP_CHANNEL = 0x10
@@ -139,14 +140,19 @@ async def main():
                         
                         print(f"Audio saved to: {wav_file_path}")
 
-                        # Process audio through mock AI functions
-                        print("Processing audio through AI...")
-                        text_blocks = mock_process_audio(wav_file_path)
-                        
-                        # Display the results with retries
-                        if not await display_text_safely(frame, text_blocks):
-                            print("Failed to display results on Frame")
-                            await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Display failed").pack())
+                        # Process audio through OpenAI Whisper
+                        print("Transcribing audio...")
+                        try:
+                            transcribed_text = await transcribe_audio(wav_file_path)
+                            print(f"Transcribed text: {transcribed_text}")
+                            
+                            # Display the transcribed text
+                            if not await display_text_safely(frame, [transcribed_text]):
+                                print("Failed to display results on Frame")
+                                await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Display failed").pack())
+                        except Exception as e:
+                            print(f"Error transcribing audio: {e}")
+                            await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Transcription failed").pack())
                     else:
                         print("Failed to collect audio data after all retries")
                         await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Recording failed").pack())

@@ -11,10 +11,13 @@ This document outlines the current investigations and planned features for the B
 
 ## Short-term Goals 🎯
 
-- [ ] Use OpenAI realtime API to add speech to LLM calls to glasses
+- [ ] Use OpenAI realtime API to transcribe speech to LLM calls to glasses
 - [ ] Create example scripts for common use cases
 
 ## Medium-term Goals 🚀
+
+- [ ] Clean up utils  
+- [ ] Add testing for utils
 
 ## Long-term Vision 🌟
 
