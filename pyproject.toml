@@ -6,5 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "frame-msg>=5.1.1",
+    "openai>=1.82.0",
     "pillow>=11.2.1",
+    "python-dotenv>=1.1.0",
 ]
