@@ -8,6 +8,7 @@ from utils.text import format_text_for_frame
 from utils.message import safe_send_message
 from utils.frame_utils import cleanup
 from utils.audio_utils import transcribe_audio
+from utils.ai_utils import get_ai_response
 
 TEXT_CHANNEL = 0x0a
 TAP_CHANNEL = 0x10
@@ -146,13 +147,22 @@ async def main():
                             transcribed_text = await transcribe_audio(wav_file_path)
                             print(f"Transcribed text: {transcribed_text}")
                             
-                            # Display the transcribed text
-                            if not await display_text_safely(frame, [transcribed_text]):
+                            # Get AI response
+                            print("Getting AI response...")
+                            ai_response = await get_ai_response(transcribed_text)
+                            print(f"AI response: {ai_response}")
+                            
+                            # Display both the transcribed text and AI response
+                            display_text = [
+                                ai_response
+                            ]
+                            
+                            if not await display_text_safely(frame, display_text):
                                 print("Failed to display results on Frame")
                                 await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Display failed").pack())
                         except Exception as e:
-                            print(f"Error transcribing audio: {e}")
-                            await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Transcription failed").pack())
+                            print(f"Error processing audio: {e}")
+                            await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Processing failed").pack())
                     else:
                         print("Failed to collect audio data after all retries")
                         await safe_send_message(frame, TEXT_CHANNEL, TxPlainText("Recording failed").pack())
