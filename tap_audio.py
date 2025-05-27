@@ -7,7 +7,7 @@ from utils.mock_ai import mock_process_audio
 from utils.text import format_text_for_frame
 from utils.message import safe_send_message
 from utils.frame_utils import cleanup
-from utils.audio_utils import transcribe_audio
+from utils.audio_utils import transcribe_audio, cleanup_old_audio_files
 from utils.ai_utils import get_ai_response
 
 TEXT_CHANNEL = 0x0a
@@ -140,6 +140,9 @@ async def main():
                             wav_file.write(wav_bytes)
                         
                         print(f"Audio saved to: {wav_file_path}")
+                        
+                        # Clean up old audio files, keeping only the last 5
+                        cleanup_old_audio_files()
 
                         # Process audio through OpenAI Whisper
                         print("Transcribing audio...")

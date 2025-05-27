@@ -2,10 +2,33 @@ import openai
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import glob
 
 load_dotenv()
 
 client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+def cleanup_old_audio_files(audio_dir='audio', keep_count=5):
+    """
+    Keep only the most recent audio files and delete older ones.
+    
+    Args:
+        audio_dir: Directory containing audio files
+        keep_count: Number of most recent files to keep
+    """
+    # Get all wav files in the directory
+    wav_files = glob.glob(os.path.join(audio_dir, 'frame_audio_*.wav'))
+    
+    # Sort files by modification time (newest first)
+    wav_files.sort(key=os.path.getmtime, reverse=True)
+    
+    # Delete older files
+    for old_file in wav_files[keep_count:]:
+        try:
+            os.remove(old_file)
+            print(f"Deleted old audio file: {old_file}")
+        except Exception as e:
+            print(f"Error deleting file {old_file}: {e}")
 
 async def transcribe_audio(audio_file_path: str | Path) -> str:
     """

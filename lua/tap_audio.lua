@@ -15,6 +15,9 @@ data.parsers[AUDIO_SUBS_MSG] = code.parse_code
 data.parsers[TEXT_FLAG] = plain_text.parse_plain_text
 
 function print_text(text)
+    -- Clear the display first by writing a space
+    frame.display.text(" ", 1, 1)
+    
     local i = 0
     for line in text:gmatch('([^\n]*)\n?') do
         if line ~= '' then
@@ -28,6 +31,9 @@ end
 function app_loop()
     frame.display.text('Frame App Started', 1, 1)
     frame.display.show()
+    
+    -- Add a delay to show the initial text longer
+    frame.sleep(1.0)
 
     -- tell the host program that the frameside app is ready (waiting on await_print)
     print('Frame app is running')
@@ -64,7 +70,6 @@ function app_loop()
                                 audio_data = ''
                                 streaming = true
                                 audio.start({sample_rate=8000, bit_depth=16})
-                                frame.display.text("\u{F0010}", 300, 1)
                             end
                         else
                             if streaming then
