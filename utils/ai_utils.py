@@ -36,7 +36,7 @@ class BasicChatState(TypedDict):
 def get_weather(location: str) -> str:
     """Get current weather information for a location.
     Args:
-        location: City name or location to get weather for
+        location: City name or location to get weather for (e.g. "London", "New York", "Paris")
     Returns:
         str: Weather information including temperature, conditions, and humidity
     """
@@ -44,16 +44,26 @@ def get_weather(location: str) -> str:
         api_key = os.getenv('OPENWEATHER_API_KEY')
         if not api_key:
             return "Weather API key not configured. Please set OPENWEATHER_API_KEY in .env file."
-            
-        # Make API request to OpenWeatherMap
-        base_url = "http://api.openweathermap.org/data/2.5/weather"
-        params = {
-            'q': location,
-            'appid': api_key,
-            'units': 'metric'  # Use metric units
-        }
         
-        response = requests.get(base_url, params=params)
+        # Clean the location string
+        # Remove common prefixes like "Location:", "City:", etc.
+        location = location.lower()
+        prefixes_to_remove = ['location:', 'city:', 'place:', 'in', 'at']
+        for prefix in prefixes_to_remove:
+            if location.startswith(prefix):
+                location = location[len(prefix):]
+        
+        # Remove any extra whitespace and capitalize each word
+        location = ' '.join(word.capitalize() for word in location.strip().split())
+        
+        if not location:
+            return "No valid location provided. Please specify a city name."
+            
+        # Construct the API URL with parameters
+        base_url = "https://api.openweathermap.org/data/2.5/weather"
+        url = f"{base_url}?q={location}&appid={api_key}&units=metric"
+        
+        response = requests.get(url)
         response.raise_for_status()
         
         data = response.json()
